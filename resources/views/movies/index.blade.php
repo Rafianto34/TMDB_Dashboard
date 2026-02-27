@@ -20,7 +20,23 @@
 
     .topbar { background: linear-gradient(90deg, #fb7185, #e11d48); padding: 20px 30px; border-radius: 15px; color: white; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
 
-    .btn-add { background-color: #fff; color: #e11d48; border: none; border-radius: 10px; padding: 10px 20px; font-weight: 600; text-decoration: none; }
+    .btn-add { 
+        background-color: #0d9488; 
+        color: white; 
+        border: none; 
+        border-radius: 10px; 
+        padding: 8px 15px; 
+        font-weight: 600; 
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+    }
+    .btn-add:hover {
+        background-color: #0f766e;
+        color: white;
+    }
 
     .card-custom { 
         border-radius: 18px; 
@@ -218,8 +234,7 @@
 <div class="main-content">
 
     <div class="topbar">
-        <h2>Movie List</h2>
-        <a href="{{ route('movies.create') }}" class="btn-add">+ Add Movie</a>
+        <h2 class="mb-0">Movie List</h2>
     </div>
 
     <!-- Alert Success dengan SweetAlert -->
@@ -228,7 +243,7 @@
             document.addEventListener("DOMContentLoaded", function () {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Berhasil!',
+                    title: 'success!',
                     text: '{{ $message }}',
                     showConfirmButton: false,
                     timer: 2500,
@@ -244,7 +259,7 @@
         <form method="GET" action="{{ route('movies.index') }}" 
               class="row g-3 align-items-end justify-content-center">
 
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <input type="text" name="search" value="{{ request('search') }}" 
                        class="form-control" placeholder="Search title...">
             </div>
@@ -265,9 +280,10 @@
             </div>
 
             <!-- tombol sejajar -->
-            <div class="col-md-3 d-flex gap-2">
-                <button class="btn btn-apply w-50">Apply</button>
-                <a href="{{ route('movies.index') }}" class="btn btn-reset w-50">Reset</a>
+            <div class="col-md-4 d-flex gap-2">
+                <a href="{{ route('movies.create') }}" class="btn btn-add flex-grow-1">+ Add</a>
+                <button type="submit" class="btn btn-apply flex-grow-1">Apply</button>
+                <a href="{{ route('movies.index') }}" class="btn btn-reset flex-grow-1">Reset</a>
             </div>
 
         </form>
@@ -361,21 +377,19 @@
         allowInput: true
     });
 
-    // SweetAlert2 Confirmation untuk Delete
+    // SweetAlert2 Confirmation for Delete
     function confirmDelete(id, title) {
         Swal.fire({
-            title: 'Hapus Data?',
-            html: `Anda akan menghapus film <b>"${title}"</b>.<br>Tindakan ini tidak bisa dibatalkan!`,
+            title: 'Delete Movie?',
+            html: `You are about to delete <b>"${title}"</b>.<br>This action cannot be undone!`,
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#e11d48',
-            cancelButtonColor: '#6b7280',
-            confirmButtonText: 'Ya, Hapus!',
-            cancelButtonText: 'Batal',
-            backdrop: `rgba(0,0,0,0.5)`
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, Delete!',
+            cancelButtonText: 'Cancel'
         }).then((result) => {
             if (result.isConfirmed) {
-                // Submit form kalau user klik "Ya, Hapus!"
                 document.getElementById('delete-form-' + id).submit();
             }
         });

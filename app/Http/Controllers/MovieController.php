@@ -19,7 +19,6 @@ class MovieController extends Controller
         $query->where('genre', 'like', '%' . $request->genre . '%');
     }
 
-    // DATE RANGE FILTER
     if ($request->start_date && $request->end_date) {
         $query->whereBetween('release_date', [
             $request->start_date,
@@ -58,7 +57,7 @@ class MovieController extends Controller
             'fetched_at' => now(),
         ]);
 
-        return redirect()->route('movies.index')->with('success', 'Movie berhasil ditambahkan');
+        return redirect()->route('movies.index')->with('success', 'Movie added successfully');
     }
 
     public function edit(Movie $movie)
@@ -82,13 +81,13 @@ class MovieController extends Controller
             'popularity' => $request->popularity,
         ]);
 
-        return redirect()->route('movies.index')->with('success', 'Movie berhasil diupdate');
+        return redirect()->route('movies.index')->with('success', 'Movie updated successfully');
     }
 
     public function destroy(Movie $movie)
     {
         $movie->delete();
 
-        return redirect()->route('movies.index')->with('success', 'Movie berhasil dihapus');
+        return redirect()->route('movies.index')->with('success', 'Movie deleted successfully');
     }
 }

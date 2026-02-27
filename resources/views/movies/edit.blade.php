@@ -193,17 +193,17 @@
 
             <div class="mb-3">
                 <label class="form-label">Title</label>
-                <input type="text" name="title" value="{{ old('title', $movie->title) }}" class="form-control" placeholder="Masukkan judul movie...">
+                <input type="text" name="title" value="{{ old('title', $movie->title) }}" class="form-control" placeholder="Enter movie title...">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Genre</label>
-                <input type="text" name="genre" value="{{ old('genre', $movie->genre) }}" class="form-control" placeholder="Bisa dipisah koma (e.g. Action, Comedy)">
+                <input type="text" name="genre" value="{{ old('genre', $movie->genre) }}" class="form-control" placeholder="Can be separated by commas (e.g., Action, Comedy)">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Release Date</label>
-                <input type="text" id="release_date" name="release_date" value="{{ old('release_date', $movie->release_date) }}" class="form-control date-input" placeholder="Pilih tanggal rilis">
+                <input type="text" id="release_date" name="release_date" value="{{ old('release_date', $movie->release_date) }}" class="form-control date-input" placeholder="Select release date">
             </div>
 
             <div class="mb-4">

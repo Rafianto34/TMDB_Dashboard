@@ -13,6 +13,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
  <style>
         body { background-color: #f5f6fa; font-family: 'Segoe UI', sans-serif; }
@@ -71,9 +74,7 @@
     background: #ffe4e6;
     color: #be123c;
 }
-/* =========================================
-   FLATPICKR FULL FIX - PINK THEME CLEAN
-========================================= */
+
 
 /* Calendar container */
 .flatpickr-calendar {
@@ -104,13 +105,7 @@
     font-weight: 600 !important;
 }
 
-/* =========================================
-   DROPDOWN BULAN FIX TOTAL
-========================================= */
 
-/* Dropdown wrapper */
-/* Better Month Dropdown Styling */
-/* Better Month Dropdown Styling */
 .flatpickr-current-month .flatpickr-monthDropdown-months {
     background: rgba(255, 255, 255, 0.15) !important;
     color: white !important;
@@ -129,8 +124,8 @@
 }
 /* Ensure options are visible and have contrast */
 .flatpickr-current-month .flatpickr-monthDropdown-month {
-    background-color: #ffffff !important; /* White background for list */
-    color: #111827 !important; /* Dark text for list */
+    background-color: #ffffff !important; 
+    color: #111827 !important;
 }
 
 /* Year Input Styling */
@@ -146,18 +141,14 @@
     border-top-color: white;
 }
 
-/* =========================================
-   WEEKDAY STYLE
-========================================= */
+
 
 .flatpickr-weekday {
     color: #e11d48 !important;
     font-weight: 600 !important;
 }
 
-/* =========================================
-   DAY STYLE
-========================================= */
+
 
 .flatpickr-day {
     border-radius: 10px !important;
@@ -180,9 +171,7 @@
     border: 2px solid #e11d48 !important;
 }
 
-/* =========================================
-   ARROW NAVIGATION
-========================================= */
+
 
 .flatpickr-prev-month svg,
 .flatpickr-next-month svg {
@@ -227,7 +216,7 @@
     <a href="{{ route('dashboard') }}" class="btn-reset">Reset</a>
 
 </form>
-                    <a href="{{ route('sync.movies') }}" class="btn-red sync-btn">Sync Movies</a>
+                    <button onclick="syncMovies()" class="btn-red sync-btn">Sync Movies</button>
                 </div>
             </div>
 
@@ -244,7 +233,7 @@
                 <!-- Pie Chart: Genre Distribution -->
                 <div class="col-md-6">
                     <div class="card-custom">
-                        <h6 class="mb-3">Genre Distribution (1 Month)</h6>
+                        <h6 class="mb-3">Genre Distribution </h6>
                         <canvas id="genreChart"></canvas>
                     </div>
                 </div>
@@ -252,7 +241,7 @@
                 <!-- Bar Chart: Top 5 Most Frequent Genres -->
                 <div class="col-md-6">
                     <div class="card-custom">
-                        <h6 class="mb-3">Top 5 Most Frequent Genres</h6>
+                        <h6 class="mb-3">Top 5 Most Frequent Genres (Last 1 Month)</h6>
                         <canvas id="topGenreChart"></canvas>
                     </div>
                 </div>
@@ -319,13 +308,46 @@
     });
 
     // Bar Chart Top 5 Most Frequent Genres
+    const top5Labels = {!! json_encode($top5GenresLabels) !!};
+    const top5Data = {!! json_encode($top5GenresCounts) !!};
+    const chartColors = ['#e11d48', '#fb7185', '#f43f5e', '#be123c', '#9f1239'];
+
     const topGenreChart = new Chart(document.getElementById('topGenreChart'), {
         type: 'bar',
         data: {
-            labels: {!! json_encode($top5GenresLabels) !!},
-            datasets: [{ label: 'Count', data: {!! json_encode($top5GenresCounts) !!}, backgroundColor: '#e11d48' }]
+            labels: top5Labels,
+            datasets: [{
+                data: top5Data,
+                backgroundColor: chartColors,
+                borderRadius: 10,
+                borderSkipped: false,
+            }]
         },
-        options: { indexAxis: 'x', responsive: true }
+        options: { 
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false // Hide the "Count" legend/filter
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return ` Count: ${context.raw}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: { 
+                    grid: { display: false }
+                },
+                y: { 
+                    beginAtZero: true,
+                    grid: { color: '#f3f4f6' },
+                    ticks: { precision: 0 }
+                }
+            }
+        }
     });
 
     // Line Chart Genre Trend Over 6 Months
@@ -347,6 +369,55 @@
         },
         options: { responsive: true, plugins: { legend: { position: 'top' } } }
     });
+
+    // AJAX Sync Movies Function
+    function syncMovies() {
+        Swal.fire({
+            title: 'Syncing Movies...',
+            html: 'Please wait while we fetch the latest data.',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        fetch("{{ route('sync.movies') }}", {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => {
+            return response.json().then(data => {
+                if (response.ok && data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Sync Success!',
+                        text: data.message || 'Latest movie data synced successfully.',
+                        showConfirmButton: false,
+                        timer: 2000
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Sync Failed!',
+                        text: data.message || 'An error occurred while syncing data.'
+                    });
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Could not connect to the server or a fatal error occurred.'
+            });
+        });
+    }
 </script>
 
 </body>

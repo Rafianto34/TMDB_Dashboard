@@ -3,13 +3,19 @@
 A web-based Dashboard application to display and manage a list of movies fetched directly from **The Movie Database (TMDb)**. This project is built using **Laravel 12**.
 
 ## Key Features
-- **Automatic Synchronization (TMDb API)**: Fetch the latest popular movie data (such as title, release date, and popularity score) using the TMDb API, either periodically or manually.
-- **Genre Conversion (Mapper)**: Automatically converts the numeric *genre_ids* returned by TMDb into descriptive genre text names (e.g., ID 28 becomes "Action", 35 becomes "Comedy").
-- **Movie CRUD Management**: A complete system to Create, Read, Update, and Delete movie data independently within your database.
-- **Specific Filter & Search**: Perform searches based on *title*, *genre*, up to minimum *popularity* limits.
-- **Date Range Filter & Flatpickr UI**: Enables time-based filtering using an aesthetic *Flatpickr* calendar design (integrated modern Pink/Red Theme) to capture releases within a specific *start_date* and *end_date* range.
-- **Sorting & Aggregation**: Display data with specific sorting options (`sort & direction`) and simplify (grouping) data based on `release_date` or `genre`.
-- **Interactive Dashboard UI**: Smooth genre distribution charts and *responsive data tables* (without prominent borders/lines) featuring a soft *glassmorphism* aesthetic.
+- **Interactive Dashboard Analytics**:
+    - **Top 5 Genres Chart**: Real-time bar chart showing the most frequent genres.
+    - **Genre Distribution**: Visual pie chart for oversight of movie categories.
+    - **6-Month Genre Trend**: Chronologically sorted line chart tracking genre popularity over time.
+    - **Quick Summary**: Cards for Total Movies, Top Genre, Latest Entry, and Last Sync timestamp.
+- **AJAX Synchronization (TMDb API)**: Robust one-click sync process using TMDb API with interactive SweetAlert2 loading states and English feedback.
+- **Smart Mapping**: Automatic conversion of numeric *genre_ids* from TMDb into descriptive text names.
+- **English Localization**: Fully translated UI, including alerts, warnings, confirmation dialogs, and form placeholders.
+- **Premium UI/UX**:
+    - **Consolidated Controls**: "Add Movie" button integrated into the filter bar for better workflow.
+    - **Aesthetic Design**: Clean Pink/Teal theme with custom *Flatpickr* and *SweetAlert2* styling.
+    - **Responsive Tables**: Borderless, sortable data tables with search and date-range filters.
+- **Movie CRUD Management**: Complete system to Create, Read, Update, and Delete movie records with built-in validation.
 
 ##  Requirements
 Ensure the following are installed and configured on your server/local machine:

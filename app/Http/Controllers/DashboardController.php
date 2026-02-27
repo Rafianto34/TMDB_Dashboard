@@ -58,7 +58,7 @@ class DashboardController extends Controller
 
     $grouped = $movies6Months->groupBy(function($movie) {
         return Carbon::parse($movie->release_date)->format('Y-m');
-    });
+    })->sortKeys();
 
     $genreTrendLabels = $grouped->keys()->toArray();
 
@@ -92,7 +92,7 @@ class DashboardController extends Controller
     }
 
     //  LAST SYNC 
-    $lastSyncRecord = SyncLog::latest('last_sync_at')->first();
+    $lastSyncRecord = SyncLog::latest('id')->first();
     $lastSync = $lastSyncRecord
         ? Carbon::parse($lastSyncRecord->last_sync_at)
             ->timezone('Asia/Jakarta')
