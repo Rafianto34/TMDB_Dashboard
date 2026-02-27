@@ -121,4 +121,4 @@ Collaborators who wish to contribute and update the code structure are highly re
 5. Open a Pull Request via the repository (Github/Gitlab) and request a review from the relevant Lead Developer.
 
 ---
-**Documentation © 2026** - Powered by the innovative Laravel 12.x framework 🔥
+**Documentation © 2026** - Powered by the innovative Laravel 12.x framework 
