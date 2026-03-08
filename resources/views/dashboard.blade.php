@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Movie Analytics Dashboard</title>
+    <title>CineDash Analytics</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -61,9 +61,8 @@
 
        /* ===== Flatpickr Custom Clean Pink Theme ===== */
 .btn-reset {
-    background: #e11d48;
-    border: 1px solid #e11d48;
-    color: #ffffffff;
+    background: #991b1b;
+    color: white;
     border-radius: 10px;
     padding: 8px 18px;
     text-decoration: none;
@@ -71,8 +70,8 @@
 }
 
 .btn-reset:hover {
-    background: #ffe4e6;
-    color: #be123c;
+    background: #7f1d1d;
+    color: white;
 }
 
 
@@ -180,17 +179,29 @@
 
 
         h6 { font-weight: 600; }
+
+        /* Modal Styling */
+        .modal-content { border-radius: 20px; border: none; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+        .modal-header { border-bottom: none; padding: 25px 25px 10px; }
+        .modal-body { padding: 25px; }
+        .detail-image { border-radius: 15px; width: 100%; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        
+        tr.clickable-row { cursor: pointer; transition: 0.2s; }
+        tr.clickable-row:hover { background-color: #fff1f2 !important; }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
 <div class="container-fluid">
     <div class="row">
         <!-- Sidebar -->
         <div class="col-md-2 sidebar p-4">
-            <h4> MovieApp</h4>
-            <hr>
+            <h4 class="text-center mb-3">CineDash</h4>
+            <hr style="margin-top: 0;">
             <a href="{{ route('dashboard') }}" class="active">Dashboard</a>
             <a href="{{ route('movies.index') }}">Movies</a>
+            <a href="{{ route('tv_shows.index') }}">TV Shows</a>
+            <a href="{{ route('people.index') }}">People</a>
         </div>
 
         <!-- Main -->
@@ -216,71 +227,244 @@
     <a href="{{ route('dashboard') }}" class="btn-reset">Reset</a>
 
 </form>
-                    <button onclick="syncMovies()" class="btn-red sync-btn">Sync Movies</button>
+                    <button onclick="syncMovies()" class="btn-red sync-btn">Sync Data</button>
                 </div>
             </div>
 
             <!-- Summary Cards -->
             <div class="row g-4 mb-4">
                 <div class="col-md-3"><div class="card-custom"><div class="card-title-small">Total Movies</div><div class="card-value">{{ $totalMovies }}</div></div></div>
-                <div class="col-md-3"><div class="card-custom"><div class="card-title-small">Top Genre</div><div class="card-value">{{ $topGenre }}</div></div></div>
-                <div class="col-md-3"><div class="card-custom"><div class="card-title-small">Latest Movie</div><div class="card-value">{{ $latestMovie }}</div></div></div>
+                <div class="col-md-3"><div class="card-custom"><div class="card-title-small">Total TV shows</div><div class="card-value">{{ $totalTv }}</div></div></div>
+                <div class="col-md-3"><div class="card-custom"><div class="card-title-small">Total People</div><div class="card-value">{{ $totalPeople }}</div></div></div>
                 <div class="col-md-3"><div class="card-custom"><div class="card-title-small">Last Sync</div><div class="card-value">{{ $lastSync }}</div></div></div>
             </div>
 
-            <!-- Charts -->
+            <!-- Charts Section 1: Movies & TV -->
             <div class="row g-4">
-                <!-- Pie Chart: Genre Distribution -->
-                <div class="col-md-6">
+                <!-- Pie Chart: Movie Genre Distribution -->
+                <div class="col-md-4">
                     <div class="card-custom">
-                        <h6 class="mb-3">Genre Distribution </h6>
-                        <canvas id="genreChart"></canvas>
+                        <h6 class="mb-3">Movie Genres</h6>
+                        <canvas id="genreChart" style="max-height: 250px;"></canvas>
                     </div>
                 </div>
 
-                <!-- Bar Chart: Top 5 Most Frequent Genres -->
-                <div class="col-md-6">
+                <!-- Pie Chart: TV Genre Distribution -->
+                <div class="col-md-4">
                     <div class="card-custom">
-                        <h6 class="mb-3">Top 5 Most Frequent Genres (Last 1 Month)</h6>
-                        <canvas id="topGenreChart"></canvas>
+                        <h6 class="mb-3">TV Genre Distribution</h6>
+                        <canvas id="tvGenreChart" style="max-height: 250px;"></canvas>
                     </div>
                 </div>
 
-                <!-- Line Chart: Genre Trend Over 6 Months -->
-                <div class="col-md-12 mt-4">
+                <!-- Bar Chart: Top 5 Movie Genres -->
+                <div class="col-md-4">
                     <div class="card-custom">
-                        <h6 class="mb-3">Genre Trend Over Last 6 Months</h6>
-                        <canvas id="genreTrendChart"></canvas>
+                        <h6 class="mb-3">Top 5 Movie Genres</h6>
+                        <canvas id="topGenreChart" style="max-height: 250px;"></canvas>
                     </div>
                 </div>
             </div>
 
-            <!-- Movie Table -->
-            <div class="card-custom mt-4">
-                <div class="card-header bg-transparent border-0 px-0"><h5>Movie List</h5></div>
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Title</th>
-                                <th>Genre</th>
-                                <th>Release Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($movies as $movie)
-                                <tr>
-                                    <td>{{ $movie->title }}</td>
-                                    <td>{{ $movie->genre }}</td>
-                                    <td>{{ $movie->release_date }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="3" class="text-center">No movies found</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+            <!-- Charts Section 2: Trends & People -->
+            <div class="row g-4 mt-2">
+                <!-- Bar Chart: Top Popular People -->
+                <div class="col-md-4">
+                    <div class="card-custom">
+                        <h6 class="mb-3">Top 5 Popular People</h6>
+                        <canvas id="peopleChart" style="max-height: 250px;"></canvas>
+                    </div>
+                </div>
+
+                <!-- Line Chart: Genre Trend -->
+                <div class="col-md-8">
+                    <div class="card-custom">
+                        <h6 class="mb-3">Movie Genre Trend (Last 6 Months)</h6>
+                        <canvas id="genreTrendChart" style="max-height: 250px;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Latest Updates Row -->
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card-custom">
+                        <div class="card-header bg-transparent border-0 px-0 d-flex justify-content-between">
+                            <h5 class="mb-0">Latest Movies</h5>
+                            <small class="text-muted">Newest Releases</small>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Release Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($latestMovies as $movie)
+                                        <tr class="clickable-row" 
+                                            data-bs-toggle="modal" data-bs-target="#detailModal"
+                                            data-title="{{ $movie->title }}"
+                                            data-date="{{ $movie->release_date }}"
+                                            data-genre="{{ $movie->genre }}"
+                                            data-overview="{{ $movie->overview ?? 'No description available.' }}"
+                                            data-image="{{ $movie->poster_path ? (Str::startsWith($movie->poster_path, 'http') || Str::startsWith($movie->poster_path, '/storage') ? $movie->poster_path : 'https://image.tmdb.org/t/p/w500'.$movie->poster_path) : '' }}">
+                                            <td><strong>{{ $movie->title }}</strong></td>
+                                            <td><span class="badge bg-light text-dark">{{ $movie->release_date }}</span></td>
+                                        </tr>
+                                    @empty
+                                        <tr><td colspan="2" class="text-center">No movies found</td></tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card-custom">
+                        <div class="card-header bg-transparent border-0 px-0 d-flex justify-content-between">
+                            <h5 class="mb-0">Latest TV Series</h5>
+                            <small class="text-muted">Recent Air Dates</small>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>First Air Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($latestTvShows as $tv)
+                                        <tr class="clickable-row"
+                                            data-bs-toggle="modal" data-bs-target="#detailModal"
+                                            data-title="{{ $tv->name }}"
+                                            data-date="{{ $tv->first_air_date }}"
+                                            data-genre="{{ $tv->genre }}"
+                                            data-overview="{{ $tv->overview ?? 'No description available.' }}"
+                                            data-image="{{ $tv->poster_path ? (Str::startsWith($tv->poster_path, 'http') || Str::startsWith($tv->poster_path, '/storage') ? $tv->poster_path : 'https://image.tmdb.org/t/p/w500'.$tv->poster_path) : '' }}">
+                                            <td><strong>{{ $tv->name }}</strong></td>
+                                            <td><span class="badge bg-light text-dark">{{ $tv->first_air_date }}</span></td>
+                                        </tr>
+                                    @empty
+                                        <tr><td colspan="2" class="text-center">No TV shows found</td></tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Most Popular Row -->
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card-custom">
+                        <div class="card-header bg-transparent border-0 px-0 d-flex justify-content-between">
+                            <h5 class="mb-0">Popular Movies</h5>
+                            <small class="text-muted">By Popularity Score</small>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Popularity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($popularMovies as $movie)
+                                        <tr class="clickable-row"
+                                            data-bs-toggle="modal" data-bs-target="#detailModal"
+                                            data-title="{{ $movie->title }}"
+                                            data-date="{{ $movie->release_date }}"
+                                            data-genre="{{ $movie->genre }}"
+                                            data-overview="{{ $movie->overview ?? 'No description available.' }}"
+                                            data-image="{{ $movie->poster_path ? (Str::startsWith($movie->poster_path, 'http') || Str::startsWith($movie->poster_path, '/storage') ? $movie->poster_path : 'https://image.tmdb.org/t/p/w500'.$movie->poster_path) : '' }}">
+                                            <td><strong>{{ $movie->title }}</strong></td>
+                                            <td><span class="text-danger font-weight-bold">{{ round($movie->popularity, 1) }}</span></td>
+                                        </tr>
+                                    @empty
+                                        <tr><td colspan="2" class="text-center">No movies found</td></tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card-custom">
+                        <div class="card-header bg-transparent border-0 px-0 d-flex justify-content-between">
+                            <h5 class="mb-0">Popular TV Series</h5>
+                            <small class="text-muted">By Popularity Score</small>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Popularity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($popularTvShows as $tv)
+                                        <tr class="clickable-row"
+                                            data-bs-toggle="modal" data-bs-target="#detailModal"
+                                            data-title="{{ $tv->name }}"
+                                            data-date="{{ $tv->first_air_date }}"
+                                            data-genre="{{ $tv->genre }}"
+                                            data-overview="{{ $tv->overview ?? 'No description available.' }}"
+                                            data-image="{{ $tv->poster_path ? (Str::startsWith($tv->poster_path, 'http') || Str::startsWith($tv->poster_path, '/storage') ? $tv->poster_path : 'https://image.tmdb.org/t/p/w500'.$tv->poster_path) : '' }}">
+                                            <td><strong>{{ $tv->name }}</strong></td>
+                                            <td><span class="text-danger font-weight-bold">{{ round($tv->popularity, 1) }}</span></td>
+                                        </tr>
+                                    @empty
+                                        <tr><td colspan="2" class="text-center">No TV shows found</td></tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- People Table Row -->
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div class="card-custom">
+                        <div class="card-header bg-transparent border-0 px-0"><h5>Top Popular People</h5></div>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Department</th>
+                                        <th>Popularity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($people as $person)
+                                    <tr class="clickable-row"
+                                        data-bs-toggle="modal" data-bs-target="#detailModal"
+                                        data-title="{{ $person->name }}"
+                                        data-date="Popularity: {{ $person->popularity }}"
+                                        data-genre="{{ $person->known_for_department }}"
+                                        data-overview="{{ $person->biography ?? 'Known for department: ' . $person->known_for_department }}"
+                                        data-image="{{ $person->profile_path ? (Str::startsWith($person->profile_path, 'http') || Str::startsWith($person->profile_path, '/storage') ? $person->profile_path : 'https://image.tmdb.org/t/p/w500'.$person->profile_path) : '' }}">
+                                        <td>{{ $person->name }}</td>
+                                        <td>{{ $person->known_for_department }}</td>
+                                        <td>{{ $person->popularity }}</td>
+                                    </tr>
+                                    @empty
+                                    <tr><td colspan="3" class="text-center">No people found</td></tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -370,10 +554,52 @@
         options: { responsive: true, plugins: { legend: { position: 'top' } } }
     });
 
+    // TV Genre Distribution Chart
+    new Chart(document.getElementById('tvGenreChart'), {
+        type: 'pie',
+        data: {
+            labels: {!! json_encode($tvGenreLabels) !!},
+            datasets: [{
+                data: {!! json_encode($tvGenreCounts) !!},
+                backgroundColor: [
+                    '#fb7185', '#e11d48', '#be123c', '#9f1239', '#881337',
+                    '#fda4af', '#f43f5e', '#dc2626', '#b91c1c', '#991b1b'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+
+    // Popular People Chart
+    new Chart(document.getElementById('peopleChart'), {
+        type: 'bar',
+        data: {
+            labels: {!! json_encode($peopleLabels) !!},
+            datasets: [{
+                label: 'Popularity Score',
+                data: {!! json_encode($peoplePopularity) !!},
+                backgroundColor: '#14b8a6',
+                borderRadius: 8
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+
     // AJAX Sync Movies Function
     function syncMovies() {
         Swal.fire({
-            title: 'Syncing Movies...',
+            title: 'Syncing Data...',
             html: 'Please wait while we fetch the latest data.',
             allowOutsideClick: false,
             didOpen: () => {
@@ -418,7 +644,66 @@
             });
         });
     }
+
+    // Modal Details Logic
+    document.addEventListener('DOMContentLoaded', function() {
+        const detailModal = document.getElementById('detailModal');
+        if (detailModal) {
+            detailModal.addEventListener('show.bs.modal', function (event) {
+                const trigger = event.relatedTarget;
+                const title = trigger.getAttribute('data-title');
+                const date = trigger.getAttribute('data-date');
+                const genre = trigger.getAttribute('data-genre');
+                const overview = trigger.getAttribute('data-overview');
+                const image = trigger.getAttribute('data-image');
+
+                detailModal.querySelector('#modalTitle').textContent = title;
+                detailModal.querySelector('#modalDate').textContent = date;
+                detailModal.querySelector('#modalGenre').textContent = genre;
+                detailModal.querySelector('#modalOverview').textContent = overview;
+                
+                const imgElement = detailModal.querySelector('#modalImage');
+                imgElement.onerror = function() {
+                    this.src = 'https://via.placeholder.com/500x750?text=No+Image';
+                };
+                if (image) {
+                    imgElement.src = image;
+                    imgElement.style.display = 'block';
+                } else {
+                    imgElement.src = 'https://via.placeholder.com/500x750?text=No+Image';
+                    imgElement.style.display = 'block';
+                }
+            });
+        }
+    });
 </script>
+
+<!-- Detail Modal -->
+<div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title fw-bold" id="modalTitle">Detail Information</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-5">
+                        <img src="" id="modalImage" class="detail-image mb-3" alt="Poster">
+                    </div>
+                    <div class="col-md-7">
+                        <div class="mb-3">
+                            <span class="badge bg-danger mb-2" id="modalGenre">Genre</span>
+                            <p class="text-muted mb-1"><i class="far fa-calendar-alt me-2"></i><span id="modalDate">Release Date</span></p>
+                        </div>
+                        <h6 class="fw-bold">Overview</h6>
+                        <p id="modalOverview" class="text-secondary" style="line-height: 1.6;"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>

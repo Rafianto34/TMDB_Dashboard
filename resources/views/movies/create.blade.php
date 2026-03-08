@@ -168,10 +168,14 @@
 <body>
 
 <div class="sidebar">
-    <h4>MovieApp</h4>
-    <hr>
+    <div class="text-center mb-0">
+        <h4 class="mb-0">CineDash</h4>
+    </div>
+    <hr style="margin-top: 0;">
     <a href="{{ route('dashboard') }}">Dashboard</a>
     <a href="{{ route('movies.index') }}" class="active">Movies</a>
+    <a href="{{ route('tv_shows.index') }}">TV Shows</a>
+    <a href="{{ route('people.index') }}">People</a>
 </div>
 
 <div class="main-content">
@@ -194,7 +198,7 @@
     @endif
 
     <div class="card-custom">
-        <form action="{{ route('movies.store') }}" method="POST">
+        <form action="{{ route('movies.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <div class="mb-3">
@@ -212,9 +216,20 @@
                 <input type="text" id="release_date" name="release_date" value="{{ old('release_date') }}" class="form-control date-input" placeholder="Select release date">
             </div>
 
-            <div class="mb-4">
+            <div class="mb-3">
                 <label class="form-label">Popularity</label>
                 <input type="number" step="0.1" name="popularity" value="{{ old('popularity') }}" class="form-control" placeholder="0.0">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Poster Image</label>
+                <input type="file" name="poster" class="form-control" accept="image/*">
+                <small class="text-muted">Max size: 2MB (jpeg, png, jpg)</small>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Overview / Description</label>
+                <textarea name="overview" class="form-control" rows="4" placeholder="Enter movie description...">{{ old('overview') }}</textarea>
             </div>
 
             <button type="submit" class="btn btn-apply px-4">Save Movie</button>

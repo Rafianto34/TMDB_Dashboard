@@ -161,10 +161,14 @@
 <body>
 
 <div class="sidebar">
-    <h4>MovieApp</h4>
-    <hr>
+    <div class="text-center mb-0">
+        <h4 class="mb-0">CineDash</h4>
+    </div>
+    <hr style="margin-top: 0;">
     <a href="{{ route('dashboard') }}">Dashboard</a>
     <a href="{{ route('movies.index') }}" class="active">Movies</a>
+    <a href="{{ route('tv_shows.index') }}">TV Shows</a>
+    <a href="{{ route('people.index') }}">People</a>
 </div>
 
 <div class="main-content">
@@ -187,7 +191,7 @@
     @endif
 
     <div class="card-custom">
-        <form action="{{ route('movies.update', $movie->id) }}" method="POST">
+        <form action="{{ route('movies.update', $movie->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -206,9 +210,25 @@
                 <input type="text" id="release_date" name="release_date" value="{{ old('release_date', $movie->release_date) }}" class="form-control date-input" placeholder="Select release date">
             </div>
 
-            <div class="mb-4">
+            <div class="mb-3">
                 <label class="form-label">Popularity</label>
                 <input type="number" step="0.1" name="popularity" value="{{ old('popularity', $movie->popularity) }}" class="form-control" placeholder="0.0">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Poster Image</label>
+                @if($movie->poster_path)
+                    <div class="mb-2">
+                        <img src="{{ Str::startsWith($movie->poster_path, 'http') || Str::startsWith($movie->poster_path, '/storage') ? $movie->poster_path : 'https://image.tmdb.org/t/p/w200'.$movie->poster_path }}" alt="Current Poster" style="height: 100px; border-radius: 10px;">
+                    </div>
+                @endif
+                <input type="file" name="poster" class="form-control" accept="image/*">
+                <small class="text-muted">Max size: 2MB. Leave empty to keep current image.</small>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Overview / Description</label>
+                <textarea name="overview" class="form-control" rows="4" placeholder="Enter movie description...">{{ old('overview', $movie->overview) }}</textarea>
             </div>
 
             <button type="submit" class="btn btn-warning px-4">Update Movie</button>

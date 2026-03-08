@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Movies List</title>
+    <title>TV Shows List</title>
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Flatpickr -->
@@ -85,7 +85,6 @@
         font-weight: 600 !important;
     }
 
-    /* Better Month Dropdown Styling */
     .flatpickr-current-month .flatpickr-monthDropdown-months {
         background: rgba(255, 255, 255, 0.15) !important;
         color: white !important;
@@ -99,23 +98,9 @@
         cursor: pointer !important;
     }
 
-    .flatpickr-current-month .flatpickr-monthDropdown-months:hover {
-        background: rgba(255, 255, 255, 0.3) !important;
-        border-color: rgba(255, 255, 255, 0.5) !important;
-    }
-
-    /* Ensure options are visible and have contrast */
     .flatpickr-current-month .flatpickr-monthDropdown-month {
-        background-color: #ffffff !important; /* White background for list */
-        color: #111827 !important; /* Dark text for list */
-    }
-
-    .flatpickr-current-month .numInputWrapper span.arrowUp:after {
-        border-bottom-color: white;
-    }
-
-    .flatpickr-current-month .numInputWrapper span.arrowDown:after {
-        border-top-color: white;
+        background-color: #ffffff !important;
+        color: #111827 !important;
     }
 
     .flatpickr-weekday {
@@ -123,81 +108,58 @@
         font-weight: 600 !important;
     }
 
-    .flatpickr-day {
-        border-radius: 10px !important;
-    }
-
-    .flatpickr-day:hover {
-        background: #ffe4e6 !important;
-        color: #e11d48 !important;
-    }
-
-    .flatpickr-day.selected,
-    .flatpickr-day.startRange,
-    .flatpickr-day.endRange {
+    .flatpickr-day.selected {
         background: #e11d48 !important;
         border-color: #e11d48 !important;
         color: #ffffff !important;
     }
 
-    .flatpickr-day.today {
-        border: 2px solid #e11d48 !important;
-    }
-
-    .flatpickr-prev-month svg,
-    .flatpickr-next-month svg {
-        fill: #ffffff !important;
-    }
-
-
-    /* ===== CENTER FILTER ===== */
     .filter-wrapper {
         max-width: 900px;
         margin: auto;
     }
 
-    /* ===== TABLE HEADER MODERN STYLE ===== */
-  .table thead th {
-    background-color: white;
-    border: none;
-    padding: 15px;
-}
+    .table thead th {
+        background-color: white;
+        border: none;
+        padding: 15px;
+    }
 
-.table thead th a {
-    position: relative;
-    color: #374151;
-    text-decoration: none;
-    padding: 6px 12px;
-    border-radius: 999px;
-    transition: 0.3s;
-}
+    .table thead th a {
+        position: relative;
+        color: #374151;
+        text-decoration: none;
+        padding: 6px 12px;
+        border-radius: 999px;
+        transition: 0.3s;
+    }
 
-.table thead th a:hover {
-    color: #e11d48;
-}
+    .table thead th a:hover {
+        color: #e11d48;
+    }
 
-.table thead th a::after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 0;
-    background-color: #ffe4e6;
-    border-radius: 50%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    transition: 0.3s ease;
-    z-index: -1;
-}
+    .table thead th a::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 0;
+        background-color: #ffe4e6;
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        transition: 0.3s ease;
+        z-index: -1;
+    }
 
-.table thead th a:hover::after {
-    width: 100%;
-    height: 100%;
-}
+    .table thead th a:hover::after {
+        width: 100%;
+        height: 100%;
+    }
+
     .table tbody tr:hover { background-color: #fff5f7; }
 
     .btn-edit { background-color: #fbbf24; color: white; padding: 6px 12px; border-radius: 8px; font-size: 12px; text-decoration: none; }
-
     .btn-delete { background-color: #dc2626; color: white; padding: 6px 12px; border-radius: 8px; font-size: 12px; border: none; }
 
     .btn-apply {
@@ -205,7 +167,6 @@
         color: white;
         border: none;
     }
-
     .btn-apply:hover {
         background-color: #be123c;
         color: white;
@@ -215,7 +176,6 @@
         background-color: #991b1b;
         color: white;
     }
-
     .btn-reset:hover {
         background-color: #7f1d1d;
         color: white;
@@ -232,185 +192,103 @@
 </style>
 </head>
 <body>
-
 <div class="sidebar">
     <div class="text-center mb-0">
         <h4 class="mb-0">CineDash</h4>
     </div>
     <hr style="margin-top: 0;">
     <a href="{{ route('dashboard') }}">Dashboard</a>
-    <a href="{{ route('movies.index') }}" class="active">Movies</a>
-    <a href="{{ route('tv_shows.index') }}">TV Shows</a>
+    <a href="{{ route('movies.index') }}">Movies</a>
+    <a href="{{ route('tv_shows.index') }}" class="active">TV Shows</a>
     <a href="{{ route('people.index') }}">People</a>
 </div>
-
 <div class="main-content">
-
-    <div class="topbar">
-        <h2 class="mb-0">Movie List</h2>
-    </div>
-
-    <!-- Alert Success dengan SweetAlert -->
+    <div class="topbar"><h2 class="mb-0">TV Shows List</h2></div>
     @if ($message = Session::get('success'))
         <script>
             document.addEventListener("DOMContentLoaded", function () {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: '{{ $message }}',
-                    showConfirmButton: false,
-                    timer: 2500,
-                    backdrop: `rgba(0,0,0,0.2)`
-                });
+                Swal.fire({ icon: 'success', title: 'Success!', text: '{{ $message }}', showConfirmButton: false, timer: 2500 });
             });
         </script>
     @endif
-
-    <!-- FILTER -->
- <div class="card-custom mb-4">
-    <div class="filter-wrapper">
-        <form method="GET" action="{{ route('movies.index') }}" 
-              class="row g-3 align-items-end justify-content-center">
-
-            <div class="col-md-2">
-                <input type="text" name="search" value="{{ request('search') }}" 
-                       class="form-control" placeholder="Search title...">
-            </div>
-
-            <div class="col-md-2">
-                <input type="text" name="genre" value="{{ request('genre') }}" 
-                       class="form-control" placeholder="Genre">
-            </div>
-
-            <div class="col-md-2">
-                <input type="text" id="start_date" name="start_date" value="{{ request('start_date') }}" 
-                       class="form-control date-input" placeholder="Start Date">
-            </div>
-
-            <div class="col-md-2">
-                <input type="text" id="end_date" name="end_date" value="{{ request('end_date') }}" 
-                       class="form-control date-input" placeholder="End Date">
-            </div>
-
-            <!-- tombol sejajar -->
-            <div class="col-md-4 d-flex gap-2">
-                <a href="{{ route('movies.create') }}" class="btn btn-add flex-grow-1">+ Add</a>
-                <button type="submit" class="btn btn-apply flex-grow-1">Apply</button>
-                <a href="{{ route('movies.index') }}" class="btn btn-reset flex-grow-1">Reset</a>
-            </div>
-
-        </form>
+    <div class="card-custom mb-4">
+        <div class="filter-wrapper">
+            <form method="GET" action="{{ route('tv_shows.index') }}" class="row g-3 align-items-end justify-content-center">
+                <div class="col-md-2"><input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search name..."></div>
+                <div class="col-md-2"><input type="text" name="genre" value="{{ request('genre') }}" class="form-control" placeholder="Genre"></div>
+                <div class="col-md-2"><input type="text" id="start_date" name="start_date" value="{{ request('start_date') }}" class="form-control date-input" placeholder="Start Date"></div>
+                <div class="col-md-2"><input type="text" id="end_date" name="end_date" value="{{ request('end_date') }}" class="form-control date-input" placeholder="End Date"></div>
+                <div class="col-md-4 d-flex gap-2">
+                    <a href="{{ route('tv_shows.create') }}" class="btn btn-add flex-grow-1">+ Add</a>
+                    <button type="submit" class="btn btn-apply flex-grow-1">Apply</button>
+                    <a href="{{ route('tv_shows.index') }}" class="btn btn-reset flex-grow-1">Reset</a>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
-
-    <div class="mb-3"><strong>Total Movies:</strong> {{ $movies->count() }}</div>
-
+    <div class="mb-3"><strong>Total TV Shows:</strong> {{ $tvShows->count() }}</div>
     <div class="card-custom">
         <div class="table-responsive">
-        <table class="table table-hover">
-
-@php
-    $currentSort = request('sort');
-    $currentDirection = request('direction', 'desc');
-
-    function sort_icon($column, $currentSort, $currentDirection) {
-        if ($currentSort == $column) {
-            return $currentDirection == 'asc' ? ' ↑' : ' ↓';
-        }
-        return '';
-    }
-@endphp
-
-<thead>
-<tr>
-    <th>
-        <a href="{{ route('movies.index', array_merge(request()->all(), ['sort'=>'title','direction'=> $currentSort=='title' && $currentDirection=='asc' ? 'desc' : 'asc'])) }}">
-            Title{!! sort_icon('title',$currentSort,$currentDirection) !!}
-        </a>
-    </th>
-    <th>
-        <a href="{{ route('movies.index', array_merge(request()->all(), ['sort'=>'genre','direction'=> $currentSort=='genre' && $currentDirection=='asc' ? 'desc' : 'asc'])) }}">
-            Genre{!! sort_icon('genre',$currentSort,$currentDirection) !!}
-        </a>
-    </th>
-    <th>
-        <a href="{{ route('movies.index', array_merge(request()->all(), ['sort'=>'release_date','direction'=> $currentSort=='release_date' && $currentDirection=='asc' ? 'desc' : 'asc'])) }}">
-            Release Date{!! sort_icon('release_date',$currentSort,$currentDirection) !!}
-        </a>
-    </th>
-    <th>
-        <a href="{{ route('movies.index', array_merge(request()->all(), ['sort'=>'popularity','direction'=> $currentSort=='popularity' && $currentDirection=='asc' ? 'desc' : 'asc'])) }}">
-            Popularity{!! sort_icon('popularity',$currentSort,$currentDirection) !!}
-        </a>
-    </th>
-    <th>Action</th>
-</tr>
-</thead>
-
-<tbody>
-@forelse($movies as $movie)
-<tr class="clickable-row"
-    data-title="{{ $movie->title }}"
-    data-date="{{ $movie->release_date }}"
-    data-genre="{{ $movie->genre }}"
-    data-overview="{{ $movie->overview ?? 'No description available.' }}"
-    data-image="{{ $movie->poster_path ? (Str::startsWith($movie->poster_path, 'http') || Str::startsWith($movie->poster_path, '/storage') ? $movie->poster_path : 'https://image.tmdb.org/t/p/w500'.$movie->poster_path) : '' }}">
-    <td><strong>{{ $movie->title }}</strong></td>
-    <td>{{ $movie->genre }}</td>
-    <td>{{ \Carbon\Carbon::parse($movie->release_date)->format('d M Y') }}</td>
-    <td>{{ round($movie->popularity, 2) }}</td>
-    <td onclick="event.stopPropagation()">
-        <a href="{{ route('movies.edit', $movie->id) }}" class="btn-edit" onclick="event.stopPropagation()">Edit</a>
-        <!-- Form Delete dengan id unik untuk setiap movie -->
-        <form id="delete-form-{{ $movie->id }}" action="{{ route('movies.destroy', $movie->id) }}" method="POST" style="display:inline;" onclick="event.stopPropagation()">
-            @csrf
-            @method('DELETE')
-            <button type="button" class="btn-delete" onclick="confirmDelete('{{ $movie->id }}', '{{ addslashes($movie->title) }}')">Delete</button>
-        </form>
-    </td>
-</tr>
-@empty
-<tr>
-    <td colspan="5" class="text-center py-4">No movies found</td>
-</tr>
-@endforelse
-</tbody>
-
-        </table>
+            <table class="table table-hover">
+                @php
+                    $currentSort = request('sort');
+                    $currentDirection = request('direction', 'desc');
+                    function sort_icon($column, $currentSort, $currentDirection) {
+                        if ($currentSort == $column) return $currentDirection == 'asc' ? ' ↑' : ' ↓';
+                        return '';
+                    }
+                @endphp
+                <thead>
+                    <tr>
+                        <th><a href="{{ route('tv_shows.index', array_merge(request()->all(), ['sort'=>'name','direction'=> $currentSort=='name' && $currentDirection=='asc' ? 'desc' : 'asc'])) }}">Name{!! sort_icon('name',$currentSort,$currentDirection) !!}</a></th>
+                        <th><a href="{{ route('tv_shows.index', array_merge(request()->all(), ['sort'=>'genre','direction'=> $currentSort=='genre' && $currentDirection=='asc' ? 'desc' : 'asc'])) }}">Genre{!! sort_icon('genre',$currentSort,$currentDirection) !!}</a></th>
+                        <th><a href="{{ route('tv_shows.index', array_merge(request()->all(), ['sort'=>'first_air_date','direction'=> $currentSort=='first_air_date' && $currentDirection=='asc' ? 'desc' : 'asc'])) }}">First Air Date{!! sort_icon('first_air_date',$currentSort,$currentDirection) !!}</a></th>
+                        <th><a href="{{ route('tv_shows.index', array_merge(request()->all(), ['sort'=>'popularity','direction'=> $currentSort=='popularity' && $currentDirection=='asc' ? 'desc' : 'asc'])) }}">Popularity{!! sort_icon('popularity',$currentSort,$currentDirection) !!}</a></th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($tvShows as $tv)
+                    <tr class="clickable-row"
+                        data-title="{{ $tv->name }}"
+                        data-date="{{ $tv->first_air_date }}"
+                        data-genre="{{ $tv->genre }}"
+                        data-overview="{{ $tv->overview ?? 'No description available.' }}"
+                        data-image="{{ $tv->poster_path ? (Str::startsWith($tv->poster_path, 'http') || Str::startsWith($tv->poster_path, '/storage') ? $tv->poster_path : 'https://image.tmdb.org/t/p/w500'.$tv->poster_path) : '' }}">
+                        <td><strong>{{ $tv->name }}</strong></td>
+                        <td>{{ $tv->genre }}</td>
+                        <td>{{ $tv->first_air_date ? \Carbon\Carbon::parse($tv->first_air_date)->format('d M Y') : '-' }}</td>
+                        <td>{{ round($tv->popularity, 2) }}</td>
+                        <td onclick="event.stopPropagation()">
+                            <a href="{{ route('tv_shows.edit', $tv->id) }}" class="btn-edit" onclick="event.stopPropagation()">Edit</a>
+                            <form id="delete-form-{{ $tv->id }}" action="{{ route('tv_shows.destroy', $tv->id) }}" method="POST" style="display:inline;" onclick="event.stopPropagation()">
+                                @csrf @method('DELETE')
+                                <button type="button" class="btn-delete" onclick="confirmDelete('{{ $tv->id }}', '{{ addslashes($tv->name) }}')">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr><td colspan="5" class="text-center py-4">No TV shows found</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
-    // Init Flatpickr
-    flatpickr("#start_date", {
-        dateFormat: "Y-m-d",
-        allowInput: true
-    });
-
-    flatpickr("#end_date", {
-        dateFormat: "Y-m-d",
-        allowInput: true
-    });
-
-    // SweetAlert2 Confirmation for Delete
+    flatpickr("#start_date", { dateFormat: "Y-m-d", allowInput: true });
+    flatpickr("#end_date", { dateFormat: "Y-m-d", allowInput: true });
     function confirmDelete(id, title) {
         Swal.fire({
-            title: 'Delete Movie?',
+            title: 'Delete TV Show?',
             html: `You are about to delete <b>"${title}"</b>.<br>This action cannot be undone!`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
             cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, Delete!',
-            cancelButtonText: 'Cancel'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById('delete-form-' + id).submit();
-            }
-        });
+            confirmButtonText: 'Yes, Delete!'
+        }).then((result) => { if (result.isConfirmed) document.getElementById('delete-form-' + id).submit(); });
     }
 
     // Modal Details Logic
@@ -451,6 +329,7 @@
         }
     });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- Detail Modal -->
 <div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">

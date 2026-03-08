@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>@yield('title', 'MovieApp')</title>
+    <title>@yield('title', 'CineDash')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -126,10 +126,14 @@
 
 <!-- Sidebar -->
 <div class="sidebar">
-    <h4>MovieApp</h4>
-    <hr style="border-color: #e5e7eb;">
+    <div class="text-center mb-0">
+        <h4 class="mb-0">CineDash</h4>
+    </div>
+    <hr style="border-color: #e5e7eb; margin-top: 0;">
     <a href="{{ route('dashboard') }}">Dashboard</a>
     <a href="{{ route('movies.index') }}">Movies</a>
+    <a href="{{ route('tv_shows.index') }}">TV Shows</a>
+    <a href="{{ route('people.index') }}">People</a>
 </div>
 
 <!-- Main Content -->

@@ -4,16 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Movie extends Model
+class TvShow extends Model
 {
     protected $fillable = [
         'tmdb_id',
-        'title',
-        'release_date',
+        'name',
+        'first_air_date',
         'genre',
         'popularity',
+        'vote_average',
         'poster_path',
         'overview',
-        'fetched_at'
     ];
 }

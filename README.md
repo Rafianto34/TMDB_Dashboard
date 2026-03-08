@@ -1,32 +1,32 @@
-# API Dashboard - Movies Sync
+# CineDash - Movies & Analytics Dashboard
 
-A web-based Dashboard application to display and manage a list of movies fetched directly from **The Movie Database (TMDb)**. This project is built using **Laravel 12**.
+A premium web-based Dashboard application to display and manage movies, TV shows, and people data fetched directly from **The Movie Database (TMDb)**. This project is built using **Laravel 12**.
 
 ## Key Features
 - **Interactive Dashboard Analytics**:
     - **Top 5 Genres Chart**: Real-time bar chart showing the most frequent genres.
-    - **Genre Distribution**: Visual pie chart for oversight of movie categories.
+    - **Genre Distribution**: Visual pie chart for oversight of movie and TV show categories.
     - **6-Month Genre Trend**: Chronologically sorted line chart tracking genre popularity over time.
-    - **Quick Summary**: Cards for Total Movies, Top Genre, Latest Entry, and Last Sync timestamp.
-- **AJAX Synchronization (TMDb API)**: Robust one-click sync process using TMDb API with interactive SweetAlert2 loading states and English feedback.
+    - **Quick Summary**: Cards for Total Movies, Total TV Shows, Total People, and Last Sync timestamp.
+- **Comprehensive Media Management**:
+    - **Movies & TV Shows**: Complete system to Create, Read, Update, and Delete records with built-in validation.
+    - **People / Cast**: Dedicated module to manage profiles and popularity of actors/crew.
+- **AJAX Synchronization (TMDb API)**: Robust one-click sync process using TMDb API with interactive SweetAlert2 loading states.
 - **Smart Mapping**: Automatic conversion of numeric *genre_ids* from TMDb into descriptive text names.
-- **English Localization**: Fully translated UI, including alerts, warnings, confirmation dialogs, and form placeholders.
 - **Premium UI/UX**:
-    - **Consolidated Controls**: "Add Movie" button integrated into the filter bar for better workflow.
+    - **Text-Based Branding**: Modern text-based logo **"CineDash"** for a clean and sleek sidebar appearance.
+    - **Consolidated Controls**: Integrated filters and action buttons for better workflow.
     - **Aesthetic Design**: Clean Pink/Teal theme with custom *Flatpickr* and *SweetAlert2* styling.
     - **Responsive Tables**: Borderless, sortable data tables with search and date-range filters.
-- **Movie CRUD Management**: Complete system to Create, Read, Update, and Delete movie records with built-in validation.
 
 ##  Requirements
 Ensure the following are installed and configured on your server/local machine:
 - PHP >= 8.2
 - Composer (PHP Package Manager)
-- Database (Adaptable for MySQL / SQLite / PostgreSQL / etc.)
-- TMDb API Key - Obtain one for free by registering an account at [TMDb Developer](https://developer.themoviedb.org/docs)
+- Database (MySQL / PostgreSQL / SQLite)
+- TMDb API Key - Obtain one for free at [TMDb Developer](https://developer.themoviedb.org/docs)
 
 ##  Local Installation Guide
-Follow these steps to run the application in your local environment.
-
 1. **Clone the Project Repository**
    ```bash
    git clone <your-repo-url>
@@ -34,91 +34,65 @@ Follow these steps to run the application in your local environment.
    ```
 
 2. **Install Packages/Dependencies**
-   Run the Composer and NPM commands to download all required extensions.
    ```bash
    composer install
    npm install
    ```
 
 3. **Duplicate Environment Configuration**
-   Use `.env.example` as a base for setting up your environment by copying the file and renaming it to `.env`.
    ```bash
-   # In Command Prompt / Terminal
    copy .env.example .env
-   # Or in Linux/Mac/Git Bash: cp .env.example .env
    ```
 
-4. **Integrated Database Configuration (.env)**
-   Open the newly created `.env` file with your text editor, and ensure the database connection is set up correctly:
+4. **Database & API Configuration (.env)**
+   Update your `.env` with database credentials and TMDb API Key:
    ```env
-   DB_CONNECTION=mysql # Or your preferred db engine
-   DB_HOST=127.0.0.1
-   DB_PORT=3306
-   DB_DATABASE=your_specific_database_name
-   DB_USERNAME=root
-   DB_PASSWORD=
-   
-   # TMDB Configuration
-   TMDB_API_KEY=insert_your_tmdb_api_key_here
+   DB_DATABASE=your_db_name
+   TMDB_API_KEY=your_api_key_here
    ```
 
-5. **Generate Application Key**
-   Provides the encryption signature for sessions and caching in the application.
+5. **Generate App Key & Migrate**
    ```bash
    php artisan key:generate
-   ```
-
-6. **Migrate Database Structure**
-   This command will create all table relationships for Movies, Users, Cache, etc., required by the application into the database linked in your `.env`.
-   ```bash
    php artisan migrate
    ```
 
-7. **Compile Frontend Assets (Optional/As Needed)**
-   The project requires styling asset integration using Vite.
-   ```bash
-   npm run build
-   # Or (For live reloading during development): npm run dev
-   ```
-
-8. **Run Local Development Server**
-   Finally, start Laravel's built-in server instance.
+6. **Run Development Server**
    ```bash
    php artisan serve
    ```
-   The application and Admin Dashboard panel are now available to access via [*http://127.0.0.1:8000*](http://127.0.0.1:8000) on your web browser.
+   Access at [*http://127.0.0.1:8000*](http://127.0.0.1:8000).
 
 ## Routes & Main Endpoints Structure
-Here is how to access several main controller routes in the application. All the routes below are registered inside `routes/web.php`:
-
 | Method | Endpoint        | Controller Destination                   | Function Description                                                |
 |--------|-----------------|------------------------------------------|---------------------------------------------------------------------|
-| GET    | `/` or `/dashboard` | `DashboardController@index`            | The dashboard panel's landing home page.                            |
-| GET    | `/sync-movies`  | `SyncController@syncMovies`              | One-tap data synchronization from TMDb -> Datastore.                |
-| ALL    | `/movies`       | `MovieController (Resourceful)`          | The interface module for all internal CRUD assignment activities.   |
+| GET    | `/dashboard`    | `DashboardController@index`            | The dashboard panel's landing home page.                            |
+| GET    | `/sync-movies`  | `SyncController@syncMovies`              | One-tap data synchronization from TMDb.                             |
+| ALL    | `/movies`       | `MovieController`                        | CRUD management for Movies.                                         |
+| ALL    | `/tv-shows`     | `TvShowController`                       | CRUD management for TV Shows.                                       |
+| ALL    | `/people`       | `PersonController`                       | CRUD management for People/Cast.                                    |
 
-##  Git Guide / Workflow
-Collaborators who wish to contribute and update the code structure are highly recommended to follow these guidelines:
+## Git Guide / Workflow
+Quick guide to modify and upload your code:
 
-1. Make sure you are on and fully synchronized with the main source:
+1. **Synchronize with the main branch**:
    ```bash
    git checkout main
    git pull origin main
    ```
-2. Create a new *branch* from `main` that represents the subject of the task / new feature:
+2. **Create a new branch for features**:
    ```bash
-   git checkout -b feature-authentication / hotfix-sync-genre
+   git checkout -b feature-name-here
    ```
-3. Make and commit your changes descriptively:
+3. **Save changes (Commit)**:
    ```bash
    git add .
-   git commit -m "feat: Add exotic genre filter feature"
+   git commit -m "feat: brief description of changes"
    ```
-4. *Push* your code findings to the remote origin
+4. **Upload to repository (Push)**:
    ```bash
-   git push origin <your_branch_name>
+   git push origin feature-name-here
    ```
-5. Open a Pull Request via the repository (Github/Gitlab) and request a review from the relevant Lead Developer.
 
 ---
-**Documentation © 2026** - Powered by the innovative Laravel 12.x framework 
+**Documentation © 2026** - Powered by Laravel 12.x

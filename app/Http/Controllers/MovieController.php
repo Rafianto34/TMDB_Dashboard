@@ -46,7 +46,15 @@ class MovieController extends Controller
             'genre' => 'required',
             'release_date' => 'required|date',
             'popularity' => 'required|numeric',
+            'poster' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'overview' => 'nullable|string',
         ]);
+
+        $posterPath = null;
+        if ($request->hasFile('poster')) {
+            $posterPath = $request->file('poster')->store('posters', 'public');
+            $posterPath = '/storage/' . $posterPath;
+        }
 
         Movie::create([
             'tmdb_id' => rand(100000, 999999),
@@ -54,6 +62,8 @@ class MovieController extends Controller
             'genre' => $request->genre,
             'release_date' => $request->release_date,
             'popularity' => $request->popularity,
+            'poster_path' => $posterPath,
+            'overview' => $request->overview,
             'fetched_at' => now(),
         ]);
 
@@ -72,14 +82,18 @@ class MovieController extends Controller
             'genre' => 'required',
             'release_date' => 'required|date',
             'popularity' => 'required|numeric',
+            'poster' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'overview' => 'nullable|string',
         ]);
 
-        $movie->update([
-            'title' => $request->title,
-            'genre' => $request->genre,
-            'release_date' => $request->release_date,
-            'popularity' => $request->popularity,
-        ]);
+        $data = $request->only(['title', 'genre', 'release_date', 'popularity', 'overview']);
+
+        if ($request->hasFile('poster')) {
+            $posterPath = $request->file('poster')->store('posters', 'public');
+            $data['poster_path'] = '/storage/' . $posterPath;
+        }
+
+        $movie->update($data);
 
         return redirect()->route('movies.index')->with('success', 'Movie updated successfully');
     }

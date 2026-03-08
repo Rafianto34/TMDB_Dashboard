@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Movie;
+use App\Models\TvShow;
+use App\Models\Person;
 use App\Models\SyncLog;
 use Carbon\Carbon;
 
@@ -21,14 +23,15 @@ class DashboardController extends Controller
         ]);
     }
 
-    $movies = $query->orderBy('release_date', 'desc')->get();
+    $movies = $query->orderBy('release_date', 'desc')->take(10)->get();
 
     // TOTAL MOVIES (FILTERED)
-    $totalMovies = $movies->count();
+    $totalMovies = Movie::count(); // Use absolute total for metric card
 
-    // GENRE COUNT
+    // GENRE COUNT (Still based on all movies for accurate charts)
+    $allMovies = Movie::all();
     $genreCount = [];
-    foreach ($movies as $movie) {
+    foreach ($allMovies as $movie) {
         if ($movie->genre) {
             foreach (explode(',', $movie->genre) as $g) {
                 $g = trim($g);
@@ -49,7 +52,7 @@ class DashboardController extends Controller
     $top5GenresCounts = array_values($top5);
 
     // Latest Movie (FILTERED) 
-    $latestMovie = $movies->first()->title ?? '-';
+    $latestMovie = Movie::latest('release_date')->first()->title ?? '-';
 
     //Genre Trend 6 Months
     $sixMonthsAgo = Carbon::now()->subMonths(6);
@@ -99,6 +102,35 @@ class DashboardController extends Controller
             ->format('d M Y H:i:s')
         : '-';
 
+    // TV & People Metrics
+    $totalTv = TvShow::count();
+    $totalPeople = Person::count();
+
+    // Data for Tables
+    // Movies
+    $popularMovies = Movie::orderBy('popularity', 'desc')->take(5)->get();
+    $latestMovies = Movie::orderBy('release_date', 'desc')->take(5)->get();
+
+    // TV Shows
+    $popularTvShows = TvShow::orderBy('popularity', 'desc')->take(5)->get();
+    $latestTvShows = TvShow::orderBy('first_air_date', 'desc')->take(5)->get();
+
+    $people = Person::orderBy('popularity', 'desc')->take(10)->get();
+
+    // TV Genre Distribution (Pie Chart) - based on all
+    $tvGenresData = TvShow::all()->pluck('genre')
+        ->flatMap(fn($g) => explode(', ', $g))
+        ->filter()
+        ->countBy();
+    
+    $tvGenreLabels = $tvGenresData->keys()->toArray();
+    $tvGenreCounts = $tvGenresData->values()->toArray();
+
+    // Top 5 Popular People (Bar Chart)
+    $topPeople = Person::orderBy('popularity', 'desc')->take(5)->get();
+    $peopleLabels = $topPeople->pluck('name')->toArray();
+    $peoplePopularity = $topPeople->pluck('popularity')->toArray();
+
     return view('dashboard', compact(
         'totalMovies',
         'topGenre',
@@ -106,11 +138,21 @@ class DashboardController extends Controller
         'lastSync',
         'genreLabels',
         'genreCounts',
-        'movies',
+        'popularMovies',
+        'latestMovies',
+        'popularTvShows',
+        'latestTvShows',
+        'people',
         'top5GenresLabels',
         'top5GenresCounts',
         'genreTrendLabels',
-        'genreTrendData'
+        'genreTrendData',
+        'totalTv',
+        'totalPeople',
+        'tvGenreLabels',
+        'tvGenreCounts',
+        'peopleLabels',
+        'peoplePopularity'
     ));
 }
 }
